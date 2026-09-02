@@ -1,0 +1,91 @@
+@model ProLap.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+}
+
+<h1>Xóa sản phẩm</h1>
+
+<h3 class="text-danger">
+    Bạn có chắc chắn muốn xóa sản phẩm này không?
+</h3>
+
+<div>
+    <h4>Thông tin sản phẩm</h4>
+    <hr />
+
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            Tên sản phẩm
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Name
+        </dd>
+
+        <dt class="col-sm-3">
+            Giá bán
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Price.ToString("N0") đ
+        </dd>
+
+        <dt class="col-sm-3">
+            Thương hiệu
+        </dt>
+        <dd class="col-sm-9">
+            @(Model.Brand != null ? Model.Brand.Name : "")
+        </dd>
+
+        <dt class="col-sm-3">
+            Danh mục
+        </dt>
+        <dd class="col-sm-9">
+            @(Model.Category != null ? Model.Category.Name : "")
+        </dd>
+
+        <dt class="col-sm-3">
+            CPU
+        </dt>
+        <dd class="col-sm-9">
+            @Model.CPU
+        </dd>
+
+        <dt class="col-sm-3">
+            RAM
+        </dt>
+        <dd class="col-sm-9">
+            @Model.RAM
+        </dd>
+
+        <dt class="col-sm-3">
+            Ổ cứng
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Storage
+        </dd>
+
+        <dt class="col-sm-3">
+            Số lượng tồn kho
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Stock
+        </dd>
+
+    </dl>
+
+    <form asp-action="Delete" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <input type="submit"
+               value="Xóa"
+               class="btn btn-danger" />
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Quay lại
+        </a>
+
+    </form>
+</div>

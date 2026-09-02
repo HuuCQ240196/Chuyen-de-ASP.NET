@@ -1,0 +1,274 @@
+﻿@model List<ProLap.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+
+    decimal totalAmount = Model.Sum(x => x.Total);
+}
+
+<div class="container mt-4">
+
+    <h1 class="mb-4">
+        Giỏ hàng
+    </h1>
+    @if (TempData["CartError"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show"
+             role="alert">
+
+            @TempData["CartError"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+
+        </div>
+    }
+
+    @if (TempData["CartMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert">
+
+            @TempData["CartMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
+
+        </div>
+    }
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            Giỏ hàng của bạn hiện đang trống.
+        </div>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-primary">
+
+            Tiếp tục mua hàng
+
+        </a>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th style="width: 120px;">
+                            Hình ảnh
+                        </th>
+
+                        <th>
+                            Sản phẩm
+                        </th>
+
+                        <th style="width: 160px;">
+                            Đơn giá
+                        </th>
+
+                        <th style="width: 120px;">
+                            Số lượng
+                        </th>
+
+                        <th style="width: 180px;">
+                            Thành tiền
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <!-- HÌNH ẢNH -->
+                            <td class="text-center">
+
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl"
+                                         alt="@item.ProductName"
+                                         class="img-thumbnail"
+                                         style="
+                                    width: 90px;
+                                    height: 70px;
+                                    object-fit: contain;
+                                    " />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">
+                                        Không có ảnh
+                                    </span>
+                                }
+
+                            </td>
+
+                            <!-- TÊN SẢN PHẨM -->
+                            <td>
+
+                                <strong>
+                                    @item.ProductName
+                                </strong>
+
+                                <div class="mt-2">
+
+                                    <a asp-controller="Products"
+                                       asp-action="Details"
+                                       asp-route-id="@item.ProductId"
+                                       class="btn btn-sm btn-outline-primary">
+
+                                        Xem sản phẩm
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                            <!-- ĐƠN GIÁ -->
+                            <td>
+
+                                @item.Price.ToString("N0") đ
+
+                            </td>
+
+                            <!-- SỐ LƯỢNG -->
+                            <td class="text-center">
+
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+
+                                    <form asp-controller="Cart"
+                                          asp-action="Decrease"
+                                          method="post">
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@item.ProductId" />
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-secondary">
+                                            -
+                                        </button>
+
+                                    </form>
+
+                                    <span class="fw-bold">
+                                        @item.Quantity
+                                    </span>
+
+                                    <form asp-controller="Cart"
+                                          asp-action="Increase"
+                                          method="post">
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@item.ProductId" />
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-secondary">
+                                            +
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                                <form asp-controller="Cart"
+                                      asp-action="Remove"
+                                      method="post"
+                                      class="mt-2">
+
+                                    <input type="hidden"
+                                           name="productId"
+                                           value="@item.ProductId" />
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-danger">
+                                        Xóa
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                            <!-- THÀNH TIỀN -->
+                            <td class="text-danger fw-bold">
+
+                                @item.Total.ToString("N0") đ
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- TỔNG TIỀN -->
+        <div class="row mt-4">
+
+            <div class="col-md-6">
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+
+                    ← Tiếp tục mua hàng
+
+                </a>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <h5 class="mb-0">
+                                Tổng cộng:
+                            </h5>
+
+                            <h4 class="text-danger fw-bold mb-0">
+                                @totalAmount.ToString("N0") đ
+                            </h4>
+                            <a asp-controller="Checkout"
+                               asp-action="Index"
+                               class="btn btn-danger w-100 mt-3">
+
+                                Tiến hành thanh toán
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>

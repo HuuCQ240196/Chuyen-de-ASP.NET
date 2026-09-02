@@ -1,0 +1,271 @@
+@model ProLap.Models.Product
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+
+    var galleryImages = Model.ProductImages?
+        .Select(x => x.ImageUrl)
+        .Where(x => !string.IsNullOrWhiteSpace(x))
+        .Distinct()
+        .ToList()
+        ?? new List<string>();
+
+    if (galleryImages.Count == 0 &&
+        !string.IsNullOrWhiteSpace(Model.ImageUrl))
+    {
+        galleryImages.Add(Model.ImageUrl);
+    }
+
+    var mainImage = galleryImages.FirstOrDefault();
+}
+
+<h1>Chi tiết sản phẩm</h1>
+
+<div class="row mt-4">
+
+    <!-- KHU VỰC HÌNH ẢNH -->
+    <div class="col-md-5">
+
+        @if (!string.IsNullOrEmpty(mainImage))
+        {
+            <div class="text-center mb-3">
+
+                <img id="mainProductImage"
+                     src="@mainImage"
+                     alt="@Model.Name"
+                     class="img-fluid img-thumbnail"
+                     style="
+                width: 100%;
+                height: 400px;
+                object-fit: contain;
+                " />
+
+            </div>
+
+            @if (galleryImages.Count > 1)
+            {
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+
+                    @foreach (var image in galleryImages)
+                    {
+                        <img src="@image"
+                             alt="@Model.Name"
+                             class="img-thumbnail product-thumbnail"
+                             onclick="changeProductImage('@image', this)"
+                             style="
+                        width: 80px;
+                        height: 70px;
+                        object-fit: contain;
+                        cursor: pointer;
+                        " />
+                    }
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="border rounded p-5 text-center text-muted">
+                Chưa có hình ảnh sản phẩm
+            </div>
+        }
+
+    </div>
+
+    <!-- THÔNG TIN SẢN PHẨM -->
+    <div class="col-md-7">
+
+        <h3>@Model.Name</h3>
+
+        <h4 class="text-danger mb-4">
+            @Model.Price.ToString("N0") đ
+        </h4>
+        @if (TempData["CartMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["CartMessage"]
+            </div>
+        }
+
+        <form asp-controller="Cart"
+              asp-action="AddToCart"
+              method="post"
+              class="mb-4">
+
+            <input type="hidden"
+                   name="productId"
+                   value="@Model.Id" />
+
+            <div class="row g-2 align-items-end">
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Số lượng
+                    </label>
+
+                    <input type="number"
+                           name="quantity"
+                           value="1"
+                           min="1"
+                           max="@Model.Stock"
+                           class="form-control" />
+
+                </div>
+
+                <div class="col-md-8">
+
+                    @if (Model.Stock > 0)
+                    {
+                        <button type="submit"
+                                class="btn btn-danger w-100">
+                            Thêm vào giỏ hàng
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                class="btn btn-secondary w-100"
+                                disabled>
+                            Hết hàng
+                        </button>
+                    }
+
+                </div>
+
+            </div>
+
+        </form>
+        <dl class="row">
+
+            <dt class="col-sm-4">
+                Thương hiệu
+            </dt>
+
+            <dd class="col-sm-8">
+                @(Model.Brand != null
+                    ? Model.Brand.Name
+                    : "")
+            </dd>
+
+            <dt class="col-sm-4">
+                Danh mục
+            </dt>
+
+            <dd class="col-sm-8">
+                @(Model.Category != null
+                    ? Model.Category.Name
+                    : "")
+            </dd>
+
+            <dt class="col-sm-4">
+                CPU
+            </dt>
+
+            <dd class="col-sm-8">
+                @Model.CPU
+            </dd>
+
+            <dt class="col-sm-4">
+                RAM
+            </dt>
+
+            <dd class="col-sm-8">
+                @Model.RAM
+            </dd>
+
+            <dt class="col-sm-4">
+                Ổ cứng
+            </dt>
+
+            <dd class="col-sm-8">
+                @Model.Storage
+            </dd>
+
+            <dt class="col-sm-4">
+                Card đồ họa
+            </dt>
+
+            <dd class="col-sm-8">
+                @Model.GPU
+            </dd>
+
+            <dt class="col-sm-4">
+                Màn hình
+            </dt>
+
+            <dd class="col-sm-8">
+                @Model.Screen
+            </dd>
+
+            <dt class="col-sm-4">
+                Số lượng tồn kho
+            </dt>
+
+            <dd class="col-sm-8">
+                @Model.Stock
+            </dd>
+
+        </dl>
+
+    </div>
+
+</div>
+
+<hr />
+
+<!-- MÔ TẢ SẢN PHẨM -->
+<div class="mt-3">
+
+    <h4>Mô tả sản phẩm</h4>
+
+    <p>
+        @Model.Description
+    </p>
+
+</div>
+
+<!-- NÚT CHỨC NĂNG -->
+<div class="mt-4">
+
+    <a asp-action="Edit"
+       asp-route-id="@Model.Id"
+       class="btn btn-warning">
+        Sửa
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Quay lại
+    </a>
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        function changeProductImage(imageUrl, thumbnail) {
+
+            // Đổi ảnh lớn
+            const mainImage =
+                document.getElementById("mainProductImage");
+
+            if (mainImage) {
+                mainImage.src = imageUrl;
+            }
+
+            // Bỏ viền thumbnail cũ
+            const thumbnails =
+                document.querySelectorAll(".product-thumbnail");
+
+            thumbnails.forEach(function (item) {
+                item.style.border = "";
+            });
+
+            // Đánh dấu thumbnail đang chọn
+            thumbnail.style.border = "2px solid #0d6efd";
+        }
+
+    </script>
+}

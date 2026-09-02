@@ -1,0 +1,618 @@
+﻿@using System.Text.Json
+@using ProLap.Models
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    int cartCount = 0;
+
+    string? cartJson = Context.Session.GetString("Cart");
+
+    if (!string.IsNullOrEmpty(cartJson))
+    {
+        var cart = JsonSerializer.Deserialize<List<CartItem>>(cartJson);
+
+        if (cart != null)
+        {
+            cartCount = cart.Sum(x => x.Quantity);
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - ProLap
+    </title>
+
+    <script type="importmap"></script>
+
+    <!-- ===================================== -->
+    <!-- BOOTSTRAP -->
+    <!-- ===================================== -->
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- ===================================== -->
+    <!-- CSS CỦA PROJECT -->
+    <!-- ===================================== -->
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/Prolap.styles.css"
+          asp-append-version="true" />
+
+
+    <!-- ===================================== -->
+    <!-- CSS HEADER + FOOTER -->
+    <!-- ===================================== -->
+
+    <style>
+
+        /* ========================================= */
+        /* HEADER */
+        /* ========================================= */
+
+        .prolap-navbar {
+            background-color: #0B1F3A;
+            min-height: 70px;
+        }
+
+        /* LOGO */
+        .prolap-navbar .navbar-brand {
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s ease;
+        }
+
+        .prolap-navbar .navbar-brand:hover {
+            color: #ffffff;
+            opacity: 0.85;
+        }
+
+
+        /* ========================================= */
+        /* MENU HEADER */
+        /* ========================================= */
+
+        .prolap-navbar .nav-link {
+            color: rgba(255, 255, 255, 0.82);
+            font-weight: 500;
+            transition:
+                color 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        .prolap-navbar .nav-link:hover {
+            color: #ffffff;
+        }
+
+
+        /* ========================================= */
+        /* DROPDOWN ADMIN */
+        /* ========================================= */
+
+        .prolap-navbar .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .prolap-navbar .dropdown-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition:
+                background-color 0.2s ease;
+        }
+
+        .prolap-navbar .dropdown-item:hover {
+            background-color: #f1f5f9;
+        }
+
+
+        /* ========================================= */
+        /* NÚT MENU MOBILE */
+        /* ========================================= */
+
+        .prolap-navbar .navbar-toggler {
+            border-color:
+                rgba(255, 255, 255, 0.35);
+        }
+
+
+        /* ========================================= */
+        /* BADGE GIỎ HÀNG */
+        /* ========================================= */
+
+        .cart-badge {
+            font-size: 0.7rem;
+            margin-left: 3px;
+            vertical-align: top;
+        }
+
+
+        /* ========================================= */
+        /* FOOTER */
+        /* ========================================= */
+
+        .prolap-footer {
+            background-color: #0B1F3A;
+            color: rgba(255, 255, 255, 0.80);
+            padding: 24px 0;
+            margin-top: 40px;
+        }
+
+        .prolap-footer .footer-brand {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .prolap-footer .footer-description {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+
+        /* ========================================= */
+        /* GIÚP FOOTER Ở CUỐI TRANG */
+        /* ========================================= */
+
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .page-content {
+            flex: 1;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ===================================== -->
+    <!-- HEADER -->
+    <!-- ===================================== -->
+
+    <header>
+
+        <nav class="navbar navbar-expand-lg
+                    navbar-dark
+                    prolap-navbar
+                    shadow-sm
+                    mb-3">
+
+            <div class="container">
+
+
+                <!-- ===================================== -->
+                <!-- LOGO -->
+                <!-- ===================================== -->
+
+                <a class="navbar-brand fw-bold fs-4"
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    ProLap
+
+                </a>
+
+
+                <!-- ===================================== -->
+                <!-- NÚT MENU MOBILE -->
+                <!-- ===================================== -->
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+
+                <!-- ===================================== -->
+                <!-- MENU -->
+                <!-- ===================================== -->
+
+                <div class="collapse navbar-collapse"
+                     id="mainNavbar">
+
+
+                    <!-- ===================================== -->
+                    <!-- MENU BÊN TRÁI -->
+                    <!-- ===================================== -->
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+
+                        <!-- TRANG CHỦ -->
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Index">
+
+                                Trang chủ
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- ===================================== -->
+                        <!-- MENU QUẢN TRỊ -->
+                        <!-- CHỈ ADMIN MỚI NHÌN THẤY -->
+                        <!-- ===================================== -->
+
+                        @if (User.Identity != null &&
+                             User.Identity.IsAuthenticated &&
+                             User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   id="adminDropdown"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+
+                                    Quản trị
+
+                                </a>
+
+
+                                <ul class="dropdown-menu"
+                                    aria-labelledby="adminDropdown">
+
+
+                                    <!-- DASHBOARD -->
+
+                                    <li>
+
+                                        <a class="dropdown-item fw-semibold"
+                                           asp-controller="Dashboard"
+                                           asp-action="Index">
+
+                                            Dashboard
+
+                                        </a>
+
+                                    </li>
+
+
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+
+
+                                    <!-- SẢN PHẨM -->
+
+                                    <li>
+
+                                        <a class="dropdown-item"
+                                           asp-controller="Products"
+                                           asp-action="Index">
+
+                                            Sản phẩm
+
+                                        </a>
+
+                                    </li>
+
+
+                                    <!-- THƯƠNG HIỆU -->
+
+                                    <li>
+
+                                        <a class="dropdown-item"
+                                           asp-controller="Brands"
+                                           asp-action="Index">
+
+                                            Thương hiệu
+
+                                        </a>
+
+                                    </li>
+
+
+                                    <!-- DANH MỤC -->
+
+                                    <li>
+
+                                        <a class="dropdown-item"
+                                           asp-controller="Categories"
+                                           asp-action="Index">
+
+                                            Danh mục
+
+                                        </a>
+
+                                    </li>
+
+
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+
+
+                                    <!-- QUẢN LÝ ĐƠN HÀNG -->
+
+                                    <li>
+
+                                        <a class="dropdown-item"
+                                           asp-controller="Orders"
+                                           asp-action="Index">
+
+                                            Quản lý đơn hàng
+
+                                        </a>
+
+                                    </li>
+
+                                </ul>
+
+                            </li>
+                        }
+
+
+                        <!-- ===================================== -->
+                        <!-- PRIVACY -->
+                        <!-- ===================================== -->
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Privacy">
+
+                                Privacy
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+
+                    <!-- ===================================== -->
+                    <!-- MENU BÊN PHẢI -->
+                    <!-- ===================================== -->
+
+                    <ul class="navbar-nav align-items-lg-center">
+
+
+                        <!-- ===================================== -->
+                        <!-- GIỎ HÀNG -->
+                        <!-- ===================================== -->
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Cart"
+                               asp-action="Index">
+
+                                Giỏ hàng
+
+                                @if (cartCount > 0)
+                                {
+                                    <span class="badge
+                                                 bg-danger
+                                                 rounded-pill
+                                                 cart-badge">
+
+                                        @cartCount
+
+                                    </span>
+                                }
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- ===================================== -->
+                        <!-- NẾU ĐÃ ĐĂNG NHẬP -->
+                        <!-- ===================================== -->
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+
+                                <span class="nav-link">
+
+                                    Xin chào
+
+                                    <strong>
+                                        @User.Identity?.Name
+                                    </strong>
+
+                                </span>
+
+                            </li>
+
+
+                            <li class="nav-item">
+
+                                <form asp-area="Identity"
+                                      asp-page="/Account/Logout"
+                                      asp-route-returnUrl="@Url.Action("Index", "Home")"
+                                      method="post"
+                                      class="d-inline">
+
+                                    <button type="submit"
+                                            class="nav-link
+                                                   btn
+                                                   btn-link
+                                                   border-0">
+
+                                        Đăng xuất
+
+                                    </button>
+
+                                </form>
+
+                            </li>
+                        }
+
+
+                        <!-- ===================================== -->
+                        <!-- NẾU CHƯA ĐĂNG NHẬP -->
+                        <!-- ===================================== -->
+
+                        @if (!SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-area="Identity"
+                                   asp-page="/Account/Login">
+
+                                    Đăng nhập
+
+                                </a>
+
+                            </li>
+
+
+                            <li class="nav-item">
+
+                                <a class="nav-link"
+                                   asp-area="Identity"
+                                   asp-page="/Account/Register">
+
+                                    Đăng ký
+
+                                </a>
+
+                            </li>
+                        }
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- ===================================== -->
+    <!-- NỘI DUNG CHÍNH -->
+    <!-- ===================================== -->
+
+    <div class="page-content">
+
+        <div class="container">
+
+            <main role="main"
+                  class="pb-3">
+
+                @RenderBody()
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================== -->
+    <!-- FOOTER -->
+    <!-- ===================================== -->
+
+    <footer class="prolap-footer">
+
+        <div class="container">
+
+            <div class="d-flex
+                        flex-column
+                        flex-md-row
+                        justify-content-between
+                        align-items-center
+                        gap-2">
+
+                <!-- BÊN TRÁI -->
+
+                <div>
+
+                    &copy; 2026 -
+
+                    <span class="footer-brand">
+                        ProLap
+                    </span>
+
+                </div>
+
+
+                <!-- BÊN PHẢI -->
+
+                <div class="footer-description small">
+
+                    Laptop chính hãng - Dịch vụ chuyên nghiệp
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- ===================================== -->
+    <!-- JAVASCRIPT -->
+    <!-- ===================================== -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false
+    )
+
+</body>
+
+</html>

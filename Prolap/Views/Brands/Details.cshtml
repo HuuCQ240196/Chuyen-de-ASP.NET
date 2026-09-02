@@ -1,0 +1,35 @@
+@model ProLap.Models.Brand
+
+@{
+    ViewData["Title"] = "Chi tiết thương hiệu";
+}
+
+<h1>Chi tiết thương hiệu</h1>
+
+<div>
+    <h4>Thông tin thương hiệu</h4>
+    <hr />
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            Tên thương hiệu
+        </dt>
+
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model?.Id"
+       class="btn btn-warning">
+        Sửa
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Quay lại
+    </a>
+</div>

@@ -1,0 +1,404 @@
+﻿@model ProLap.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+
+    string badgeClass = "bg-secondary";
+
+    if (Model.Status == "Chờ xác nhận")
+    {
+        badgeClass = "bg-warning text-dark";
+    }
+    else if (Model.Status == "Đã xác nhận")
+    {
+        badgeClass = "bg-primary";
+    }
+    else if (Model.Status == "Đang giao")
+    {
+        badgeClass = "bg-info text-dark";
+    }
+    else if (Model.Status == "Hoàn thành")
+    {
+        badgeClass = "bg-success";
+    }
+    else if (Model.Status == "Đã hủy")
+    {
+        badgeClass = "bg-danger";
+    }
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h1>
+            Chi tiết đơn hàng #@Model.Id
+        </h1>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Quay lại danh sách
+        </a>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- THÔNG BÁO -->
+    <!-- ===================================== -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- ===================================== -->
+    <!-- THÔNG TIN KHÁCH HÀNG -->
+    <!-- ===================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <h5 class="mb-0">
+                Thông tin khách hàng
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-2">
+
+                <div class="col-md-3 fw-bold">
+                    Họ và tên:
+                </div>
+
+                <div class="col-md-9">
+                    @Model.CustomerName
+                </div>
+
+            </div>
+
+            <div class="row mb-2">
+
+                <div class="col-md-3 fw-bold">
+                    Số điện thoại:
+                </div>
+
+                <div class="col-md-9">
+                    @Model.Phone
+                </div>
+
+            </div>
+
+            <div class="row mb-2">
+
+                <div class="col-md-3 fw-bold">
+                    Email:
+                </div>
+
+                <div class="col-md-9">
+                    @Model.Email
+                </div>
+
+            </div>
+
+            <div class="row mb-2">
+
+                <div class="col-md-3 fw-bold">
+                    Địa chỉ giao hàng:
+                </div>
+
+                <div class="col-md-9">
+                    @Model.Address
+                </div>
+
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="col-md-3 fw-bold">
+                    Ngày đặt:
+                </div>
+
+                <div class="col-md-9">
+                    @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                </div>
+
+            </div>
+
+            <!-- ===================================== -->
+            <!-- TRẠNG THÁI HIỆN TẠI -->
+            <!-- ===================================== -->
+
+            <div class="row mb-3">
+
+                <div class="col-md-3 fw-bold">
+                    Trạng thái hiện tại:
+                </div>
+
+                <div class="col-md-9">
+
+                    <span class="badge @badgeClass fs-6">
+                        @Model.Status
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- ===================================== -->
+            <!-- CẬP NHẬT TRẠNG THÁI -->
+            <!-- ===================================== -->
+            @if (Model.Status != "Hoàn thành" &&
+                             Model.Status != "Đã hủy")
+            {
+                <div class="row">
+
+                    <div class="col-md-3 fw-bold">
+                        Cập nhật trạng thái:
+                    </div>
+
+                    <div class="col-md-9">
+
+                        <form asp-controller="Orders"
+                              asp-action="UpdateStatus"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.Id" />
+
+                            <div class="row g-2 align-items-center">
+
+                                <div class="col-md-5">
+
+                                    <select name="status"
+                                            class="form-select">
+
+                                        @if (Model.Status == "Chờ xác nhận")
+                                        {
+                                            <option value="Chờ xác nhận" selected>
+                                                Chờ xác nhận
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Chờ xác nhận">
+                                                Chờ xác nhận
+                                            </option>
+                                        }
+
+                                        @if (Model.Status == "Đã xác nhận")
+                                        {
+                                            <option value="Đã xác nhận" selected>
+                                                Đã xác nhận
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Đã xác nhận">
+                                                Đã xác nhận
+                                            </option>
+                                        }
+
+                                        @if (Model.Status == "Đang giao")
+                                        {
+                                            <option value="Đang giao" selected>
+                                                Đang giao
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Đang giao">
+                                                Đang giao
+                                            </option>
+                                        }
+
+                                        <option value="Hoàn thành">
+                                            Hoàn thành
+                                        </option>
+
+                                        <option value="Đã hủy">
+                                            Đã hủy
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                <div class="col-md-4">
+
+                                    <button type="submit"
+                                            class="btn btn-primary">
+                                        Cập nhật trạng thái
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="row">
+
+                    <div class="col-md-3 fw-bold">
+                        Ghi chú:
+                    </div>
+
+                    <div class="col-md-9">
+
+                        @if (Model.Status == "Hoàn thành")
+                        {
+                            <span class="text-success fw-bold">
+                                Đơn hàng đã hoàn thành và không thể thay đổi trạng thái.
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-danger fw-bold">
+                                Đơn hàng đã hủy và không thể thay đổi trạng thái.
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <!-- ===================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <h5 class="mb-0">
+                Sản phẩm trong đơn hàng
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.OrderItems != null &&
+                 Model.OrderItems.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Sản phẩm
+                                </th>
+
+                                <th style="width: 140px;"
+                                    class="text-center">
+                                    Số lượng
+                                </th>
+
+                                <th style="width: 180px;"
+                                    class="text-end">
+                                    Đơn giá
+                                </th>
+
+                                <th style="width: 180px;"
+                                    class="text-end">
+                                    Thành tiền
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        @if (item.Product != null)
+                                        {
+                                            <strong>
+                                                @item.Product.Name
+                                            </strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Sản phẩm không còn tồn tại
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td class="text-center">
+                                        @item.Quantity
+                                    </td>
+
+                                    <td class="text-end">
+                                        @item.Price.ToString("N0") đ
+                                    </td>
+
+                                    <td class="text-end fw-bold text-danger">
+                                        @((item.Price * item.Quantity).ToString("N0")) đ
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+
+                    <div class="text-end">
+
+                        <span class="fw-bold me-3">
+                            Tổng thanh toán:
+                        </span>
+
+                        <span class="text-danger fw-bold fs-4">
+                            @Model.TotalAmount.ToString("N0") đ
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    Đơn hàng này chưa có sản phẩm.
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,156 @@
+@model IEnumerable<ProLap.Models.Product>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<h1>Danh sách sản phẩm</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        + Thêm sản phẩm
+    </a>
+</p>
+
+<div class="table-responsive">
+
+    <table class="table table-bordered table-striped align-middle">
+
+        <thead>
+            <tr>
+                <th style="width: 110px;">
+                    Hình ảnh
+                </th>
+
+                <th>
+                    Tên sản phẩm
+                </th>
+
+                <th>
+                    Giá
+                </th>
+
+                <th>
+                    CPU
+                </th>
+
+                <th>
+                    RAM
+                </th>
+
+                <th>
+                    Lưu trữ
+                </th>
+
+                <th>
+                    Tồn kho
+                </th>
+
+                <th>
+                    Thương hiệu
+                </th>
+
+                <th>
+                    Danh mục
+                </th>
+
+                <th style="width: 230px;">
+                    Thao tác
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td class="text-center">
+
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <img src="@item.ImageUrl"
+                                 alt="@item.Name"
+                                 class="img-thumbnail"
+                                 style="
+                            width: 90px;
+                            height: 70px;
+                            object-fit: contain;
+                            " />
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                Chưa có ảnh
+                            </span>
+                        }
+
+                    </td>
+
+                    <td>
+                        @item.Name
+                    </td>
+
+                    <td>
+                        @item.Price.ToString("N0") đ
+                    </td>
+
+                    <td>
+                        @item.CPU
+                    </td>
+
+                    <td>
+                        @item.RAM
+                    </td>
+
+                    <td>
+                        @item.Storage
+                    </td>
+
+                    <td>
+                        @item.Stock
+                    </td>
+
+                    <td>
+                        @(item.Brand != null
+                            ? item.Brand.Name
+                            : "")
+                    </td>
+
+                    <td>
+                        @(item.Category != null
+                            ? item.Category.Name
+                            : "")
+                    </td>
+
+                    <td>
+
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="btn btn-sm btn-warning">
+                            Sửa
+                        </a>
+
+                        <a asp-action="Details"
+                           asp-route-id="@item.Id"
+                           class="btn btn-sm btn-info">
+                            Chi tiết
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@item.Id"
+                           class="btn btn-sm btn-danger">
+                            Xóa
+                        </a>
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

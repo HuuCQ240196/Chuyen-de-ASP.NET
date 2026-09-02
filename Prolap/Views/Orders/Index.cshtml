@@ -1,0 +1,284 @@
+﻿@model IEnumerable<ProLap.Models.Order>
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+
+    string? selectedStatus = ViewBag.SelectedStatus as string;
+}
+
+<div class="container mt-4">
+
+    <h1 class="mb-4">
+        Quản lý đơn hàng
+    </h1>
+
+    <!-- ===================================== -->
+    <!-- BỘ LỌC TRẠNG THÁI -->
+    <!-- ===================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form asp-action="Index"
+                  method="get"
+                  class="row g-2 align-items-end">
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Lọc theo trạng thái
+                    </label>
+
+                    <select name="status"
+                            class="form-select">
+
+                        @if (string.IsNullOrWhiteSpace(selectedStatus))
+                        {
+                            <option value="" selected>
+                                Tất cả trạng thái
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="">
+                                Tất cả trạng thái
+                            </option>
+                        }
+
+                        @if (selectedStatus == "Chờ xác nhận")
+                        {
+                            <option value="Chờ xác nhận" selected>
+                                Chờ xác nhận
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="Chờ xác nhận">
+                                Chờ xác nhận
+                            </option>
+                        }
+
+                        @if (selectedStatus == "Đã xác nhận")
+                        {
+                            <option value="Đã xác nhận" selected>
+                                Đã xác nhận
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="Đã xác nhận">
+                                Đã xác nhận
+                            </option>
+                        }
+
+                        @if (selectedStatus == "Đang giao")
+                        {
+                            <option value="Đang giao" selected>
+                                Đang giao
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="Đang giao">
+                                Đang giao
+                            </option>
+                        }
+
+                        @if (selectedStatus == "Hoàn thành")
+                        {
+                            <option value="Hoàn thành" selected>
+                                Hoàn thành
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="Hoàn thành">
+                                Hoàn thành
+                            </option>
+                        }
+
+                        @if (selectedStatus == "Đã hủy")
+                        {
+                            <option value="Đã hủy" selected>
+                                Đã hủy
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="Đã hủy">
+                                Đã hủy
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-auto">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Lọc
+                    </button>
+
+                </div>
+
+                <div class="col-md-auto">
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+                        Xóa bộ lọc
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- DANH SÁCH ĐƠN HÀNG -->
+    <!-- ===================================== -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>
+                            Mã đơn
+                        </th>
+
+                        <th>
+                            Khách hàng
+                        </th>
+
+                        <th>
+                            Số điện thoại
+                        </th>
+
+                        <th>
+                            Tổng tiền
+                        </th>
+
+                        <th>
+                            Ngày đặt
+                        </th>
+
+                        <th>
+                            Trạng thái
+                        </th>
+
+                        <th style="width: 130px;">
+                            Thao tác
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var order in Model)
+                    {
+                        string badgeClass = "bg-secondary";
+
+                        if (order.Status == "Chờ xác nhận")
+                        {
+                            badgeClass = "bg-warning text-dark";
+                        }
+                        else if (order.Status == "Đã xác nhận")
+                        {
+                            badgeClass = "bg-primary";
+                        }
+                        else if (order.Status == "Đang giao")
+                        {
+                            badgeClass = "bg-info text-dark";
+                        }
+                        else if (order.Status == "Hoàn thành")
+                        {
+                            badgeClass = "bg-success";
+                        }
+                        else if (order.Status == "Đã hủy")
+                        {
+                            badgeClass = "bg-danger";
+                        }
+
+                        <tr>
+
+                            <td>
+                                #@order.Id
+                            </td>
+
+                            <td>
+                                @order.CustomerName
+                            </td>
+
+                            <td>
+                                @order.Phone
+                            </td>
+
+                            <td class="text-danger fw-bold">
+                                @order.TotalAmount.ToString("N0") đ
+                            </td>
+
+                            <td>
+                                @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+
+                                <span class="badge @badgeClass">
+                                    @order.Status
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@order.Id"
+                                   class="btn btn-sm btn-primary">
+                                    Chi tiết
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+
+            @if (!string.IsNullOrWhiteSpace(selectedStatus))
+            {
+                <span>
+                    Không có đơn hàng nào có trạng thái
+                    <strong>@selectedStatus</strong>.
+                </span>
+            }
+            else
+            {
+                <span>
+                    Hiện chưa có đơn hàng nào.
+                </span>
+            }
+
+        </div>
+    }
+
+</div>

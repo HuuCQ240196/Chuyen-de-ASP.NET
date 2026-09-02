@@ -1,0 +1,212 @@
+﻿@model ProLap.Models.Order
+
+@using ProLap.Models
+
+@{
+    ViewData["Title"] = "Thanh toán";
+
+    var cart = ViewBag.Cart as List<CartItem>
+               ?? new List<CartItem>();
+
+    decimal totalAmount = ViewBag.TotalAmount != null
+        ? (decimal)ViewBag.TotalAmount
+        : 0;
+}
+
+<div class="container mt-4">
+
+    <h1 class="mb-4">
+        Thanh toán
+    </h1>
+
+    <div class="row g-4">
+
+        <!-- ===================================== -->
+        <!-- THÔNG TIN KHÁCH HÀNG -->
+        <!-- ===================================== -->
+        <div class="col-md-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        Thông tin đặt hàng
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-controller="Checkout"
+                          asp-action="Index"
+                          method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <!-- HỌ TÊN -->
+                        <div class="mb-3">
+
+                            <label asp-for="CustomerName"
+                                   class="form-label">
+                                Họ và tên
+                            </label>
+
+                            <input asp-for="CustomerName"
+                                   class="form-control"
+                                   placeholder="Nhập họ và tên..." />
+
+                            <span asp-validation-for="CustomerName"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- SỐ ĐIỆN THOẠI -->
+                        <div class="mb-3">
+
+                            <label asp-for="Phone"
+                                   class="form-label">
+                                Số điện thoại
+                            </label>
+
+                            <input asp-for="Phone"
+                                   class="form-control"
+                                   placeholder="Nhập số điện thoại..." />
+
+                            <span asp-validation-for="Phone"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div class="mb-3">
+
+                            <label asp-for="Email"
+                                   class="form-label">
+                                Email
+                            </label>
+
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   placeholder="Nhập email..." />
+
+                            <span asp-validation-for="Email"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- ĐỊA CHỈ -->
+                        <div class="mb-3">
+
+                            <label asp-for="Address"
+                                   class="form-label">
+                                Địa chỉ giao hàng
+                            </label>
+
+                            <textarea asp-for="Address"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Nhập địa chỉ giao hàng...">
+                            </textarea>
+
+                            <span asp-validation-for="Address"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="d-flex gap-2">
+
+                            <a asp-controller="Cart"
+                               asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Quay lại giỏ hàng
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                Xác nhận đặt hàng
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- TÓM TẮT ĐƠN HÀNG -->
+        <!-- ===================================== -->
+        <div class="col-md-5">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        Đơn hàng của bạn
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    @foreach (var item in cart)
+                    {
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <div>
+
+                                <strong>
+                                    @item.ProductName
+                                </strong>
+
+                                <div class="text-muted small">
+                                    Số lượng: @item.Quantity
+                                </div>
+
+                            </div>
+
+                            <div class="text-end">
+
+                                @item.Total.ToString("N0") đ
+
+                            </div>
+
+                        </div>
+
+                        <hr />
+                    }
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h5 class="mb-0">
+                            Tổng cộng
+                        </h5>
+
+                        <h4 class="text-danger fw-bold mb-0">
+                            @totalAmount.ToString("N0") đ
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

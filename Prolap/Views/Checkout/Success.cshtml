@@ -1,0 +1,232 @@
+﻿@model ProLap.Models.Order
+
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <!-- THÔNG BÁO -->
+                    <div class="text-center mb-4">
+
+                        <div class="display-4 text-success mb-3">
+                            ✓
+                        </div>
+
+                        <h2 class="text-success">
+                            Đặt hàng thành công!
+                        </h2>
+
+                        <p class="text-muted">
+                            Cảm ơn bạn đã đặt hàng tại ProLap.
+                        </p>
+
+                    </div>
+
+                    <hr />
+
+                    <!-- THÔNG TIN ĐƠN HÀNG -->
+                    <h5 class="mb-3">
+                        Thông tin đơn hàng
+                    </h5>
+
+                    <div class="row mb-2">
+
+                        <div class="col-sm-4 fw-bold">
+                            Mã đơn hàng:
+                        </div>
+
+                        <div class="col-sm-8">
+                            #@Model.Id
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-2">
+
+                        <div class="col-sm-4 fw-bold">
+                            Khách hàng:
+                        </div>
+
+                        <div class="col-sm-8">
+                            @Model.CustomerName
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-2">
+
+                        <div class="col-sm-4 fw-bold">
+                            Số điện thoại:
+                        </div>
+
+                        <div class="col-sm-8">
+                            @Model.Phone
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-2">
+
+                        <div class="col-sm-4 fw-bold">
+                            Email:
+                        </div>
+
+                        <div class="col-sm-8">
+                            @Model.Email
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-2">
+
+                        <div class="col-sm-4 fw-bold">
+                            Địa chỉ giao hàng:
+                        </div>
+
+                        <div class="col-sm-8">
+                            @Model.Address
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-2">
+
+                        <div class="col-sm-4 fw-bold">
+                            Ngày đặt:
+                        </div>
+
+                        <div class="col-sm-8">
+                            @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-4">
+
+                        <div class="col-sm-4 fw-bold">
+                            Trạng thái:
+                        </div>
+
+                        <div class="col-sm-8">
+
+                            <span class="badge bg-warning text-dark">
+                                @Model.Status
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CHI TIẾT SẢN PHẨM -->
+
+                    <h5 class="mb-3">
+                        Sản phẩm đã đặt
+                    </h5>
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered align-middle">
+
+                            <thead class="table-light">
+
+                                <tr>
+                                    <th>Sản phẩm</th>
+
+                                    <th class="text-center">
+                                        Số lượng
+                                    </th>
+
+                                    <th class="text-end">
+                                        Đơn giá
+                                    </th>
+
+                                    <th class="text-end">
+                                        Thành tiền
+                                    </th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @(item.Product != null
+                                                ? item.Product.Name
+                                                : "Sản phẩm")
+                                        </td>
+
+                                        <td class="text-center">
+                                            @item.Quantity
+                                        </td>
+
+                                        <td class="text-end">
+                                            @item.Price.ToString("N0") đ
+                                        </td>
+
+                                        <td class="text-end fw-bold">
+                                            @((item.Price * item.Quantity).ToString("N0")) đ
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <!-- TỔNG TIỀN -->
+
+                    <div class="d-flex justify-content-end mt-3">
+
+                        <div class="text-end">
+
+                            <span class="fw-bold me-3">
+                                Tổng thanh toán:
+                            </span>
+
+                            <span class="text-danger fw-bold fs-4">
+                                @Model.TotalAmount.ToString("N0") đ
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="text-center mt-4">
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-primary">
+
+                            Tiếp tục mua hàng
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,77 @@
+ĐỒ ÁN WEBSITE BÁN LAPTOP - PROLAP
+==================================
+
+1. CÔNG NGHỆ SỬ DỤNG
+- ASP.NET Core MVC (.NET 10.0)
+- Entity Framework Core 10.0.11
+- ASP.NET Core Identity 10.0.11
+- SQL Server
+- Bootstrap
+
+2. YÊU CẦU
+- Visual Studio hỗ trợ .NET 10.0
+- .NET 10 SDK
+- SQL Server Express
+- SQL Server Management Studio (SSMS)
+
+3. DATABASE
+Tên database: ProLapDB
+
+File backup database:
+Database\ProLapDB.bak
+
+Khôi phục database ProLapDB bằng SQL Server Management Studio
+trước khi chạy chương trình.
+
+SQL Server được sử dụng khi phát triển:
+.\SQLEXPRESS
+
+4. CẤU HÌNH KẾT NỐI DATABASE
+Kiểm tra Connection String trong file:
+
+Prolap\appsettings.json
+
+Nếu máy chạy chương trình sử dụng SQL Server Instance khác
+.\SQLEXPRESS thì cần chỉnh lại Connection String cho phù hợp.
+
+5. CÁCH CHẠY CHƯƠNG TRÌNH
+Bước 1: Khôi phục database ProLapDB từ file ProLapDB.bak.
+
+Bước 2: Mở file:
+Prolap.slnx
+
+Bước 3: Kiểm tra Connection String trong appsettings.json.
+
+Bước 4: Restore NuGet Packages nếu Visual Studio yêu cầu.
+
+Bước 5: Build Solution.
+
+Bước 6: Chạy project.
+
+6. TÀI KHOẢN QUẢN TRỊ
+Email:
+admin@prolap.com
+
+Password:
+Admin123
+
+7. CÁC CHỨC NĂNG CHÍNH
+- Hiển thị danh sách laptop.
+- Tìm kiếm sản phẩm.
+- Lọc sản phẩm theo thương hiệu.
+- Lọc sản phẩm theo danh mục.
+- Phân trang sản phẩm.
+- Xem chi tiết sản phẩm.
+- Hiển thị nhiều hình ảnh sản phẩm.
+- Giỏ hàng.
+- Tăng, giảm và xóa sản phẩm trong giỏ hàng.
+- Đặt hàng.
+- Kiểm tra tồn kho khi mua hàng.
+- Quản lý sản phẩm.
+- Quản lý thương hiệu.
+- Quản lý danh mục.
+- Quản lý đơn hàng.
+- Cập nhật trạng thái đơn hàng.
+- Hoàn lại tồn kho khi hủy đơn.
+- Dashboard thống kê.
+- Đăng nhập và phân quyền quản trị.
